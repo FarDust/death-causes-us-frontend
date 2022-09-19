@@ -18,22 +18,17 @@ import FavouriteIcon from '@mui/icons-material/Favorite';
 import styles from "./CauseFinder.module.scss";
 import { StyledSearchBar } from "../StyledSearchBar/StyledSearchBar";
 import { CauseOfDeath } from "../../models/causeOfDeath";
+import { useFilterCauseOfDeath } from "../../hooks/useFilterCauseOfDeath";
+import { useCreateFavouriteHandler } from "../../hooks/useCreateFavouriteHandler";
+import { useFavouritesSelector } from "../../hooks/useFavouritesSelector";
+import { useSearchHandler } from "../../hooks/useSearchHandler";
 
 interface CauseFinderProps {}
 
 const pages = ["Enfermedad", "Favoritos"];
 
 export const useCauseOfDeathState = () => {
-  const [causesOfDeath, setCausesOfDeath] = React.useState<CauseOfDeath[]>([
-    {
-      id: 1,
-      name: "Enfermedad 1",
-    },
-    {
-      id: 2,
-      name: "Enfermedad 2",
-    }
-  ]);
+  const [causesOfDeath, setCausesOfDeath] = React.useState<CauseOfDeath[]>([]);
   const [selectedCauseOfDeath, setSelectedCauseOfDeath] = React.useState<CauseOfDeath | null>(null);
 
   return {
