@@ -12,7 +12,7 @@ import {
   ListItem,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { FC, PropsWithChildren } from "react";
+import React, { FC } from "react";
 import FavouriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavouriteIcon from '@mui/icons-material/Favorite';
 import styles from "./CauseFinder.module.scss";
@@ -22,30 +22,6 @@ import { CauseOfDeath } from "../../models/causeOfDeath";
 interface CauseFinderProps {}
 
 const pages = ["Enfermedad", "Favoritos"];
-
-export const useSearchHandler = (filter: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
-
-  const [search, setSearch] = React.useState("");
-
-  const searchHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value && search !== event.target.value && event.target.value.length > 2) {
-      setSearch(event.target.value);
-      filter(event);
-    };
-  };
-
-  return { search, searchHandler };
-}
-
-export const useFilterCauseOfDeath = (causesOfDeath: CauseOfDeath[]) => {
-  const [filteredCausesOfDeath, setFilteredCausesOfDeath] = React.useState<CauseOfDeath[]>([]);
-  const filterCausesOfDeath = (event: React.ChangeEvent<HTMLInputElement>) => setFilteredCausesOfDeath(
-    causesOfDeath.filter((causeOfDeath) =>
-      causeOfDeath.name.toLowerCase().includes(event.target.value.toLowerCase())
-    )
-  );
-  return { filteredCausesOfDeath, filterCausesOfDeath };
-}
 
 export const useCauseOfDeathState = () => {
   const [causesOfDeath, setCausesOfDeath] = React.useState<CauseOfDeath[]>([
@@ -66,28 +42,6 @@ export const useCauseOfDeathState = () => {
     selectedCauseOfDeath,
     setSelectedCauseOfDeath,
   };
-}
-
-export function useFavouritesSelector<T>() {
-  const [favourites, setFavourites] = React.useState<T[]>([]);
-  const addFavourite = (favourite: T) => setFavourites([...favourites, favourite]);
-  const removeFavourite = (favourite: T) => setFavourites(favourites.filter((f) => f !== favourite));
-  const isFavourite = (favourite: T) => favourites.includes(favourite);
-  return { favourites, favouriteControl: { addFavourite, removeFavourite, isFavourite } };
-} 
-
-export const useCreateFavouriteHandler = (
-  causeOfDeath: CauseOfDeath,
-  addFavourite: (favourite: CauseOfDeath) => void,
-  removeFavourite: (favourite: CauseOfDeath) => void,
-  isFavourite: (favourite: CauseOfDeath) => boolean) => {
-  return () => {
-    if (isFavourite(causeOfDeath)) {
-      removeFavourite(causeOfDeath);
-    } else {
-      addFavourite(causeOfDeath);
-    }
-  }
 }
 
 export interface ListCauseOfDeathProps {
@@ -111,7 +65,7 @@ const ListCauseOfDeath: FC<ListCauseOfDeathProps> = ({ causesOfDeath, favouriteC
             favouriteControl.removeFavourite,
             favouriteControl.isFavourite
           )}>
-            { favouriteControl.isFavourite(causeOfDeath) ? <FavouriteIcon sx={{ color: 'red' }} /> : <FavouriteBorderIcon /> }
+            { favouriteControl.isFavourite(causeOfDeath) ? <FavouriteIcon sx={{ color: 'red' }} /> : <FavouriteBorderIcon sx={{ color: 'white' }}/> }
             </ListItemIcon>
             <ListItemButton>
               <ListItemText primary={causeOfDeath.name} />
@@ -141,7 +95,6 @@ const CauseFinder: FC<CauseFinderProps> = () => {
 
   return (
     <div className={styles.CauseFinder} data-testid="CauseFinder">
-      <AppBar position="static">
         <div className={ styles['flex-column-container']}>
           <Toolbar variant="dense">
             <div className={ styles['flex-column-container']}>
@@ -169,7 +122,6 @@ const CauseFinder: FC<CauseFinderProps> = () => {
             )}
           </Box>
         </div>
-      </AppBar>
     </div>
   );
 };
