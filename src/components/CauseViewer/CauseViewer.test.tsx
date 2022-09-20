@@ -5,7 +5,7 @@ import CauseViewer from './CauseViewer';
 
 describe('<CauseViewer />', () => {
   test('it should mount', () => {
-    render(<CauseViewer />);
+    render(<CauseViewer causeOfDeath={undefined} favourite={false} deathData={[]} />);
     
     const causeViewer = screen.getByTestId('CauseViewer');
 

@@ -1,15 +1,13 @@
 import {
-  AppBar,
   Toolbar,
-  InputBase,
-  alpha,
-  Theme as MaterialTheme,
   Button,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListItem,
+  CardContent,
+  Card,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { FC } from "react";
@@ -20,27 +18,14 @@ import { StyledSearchBar } from "../StyledSearchBar/StyledSearchBar";
 import { CauseOfDeath } from "../../models/causeOfDeath";
 import { useFilterCauseOfDeath } from "../../hooks/useFilterCauseOfDeath";
 import { useCreateFavouriteHandler } from "../../hooks/useCreateFavouriteHandler";
-import { useFavouritesSelector } from "../../hooks/useFavouritesSelector";
 import { useSearchHandler } from "../../hooks/useSearchHandler";
+import { CauseFinderProps } from "./props";
 
-interface CauseFinderProps {}
 
 const pages = ["Enfermedad", "Favoritos"];
-
-export const useCauseOfDeathState = () => {
-  const [causesOfDeath, setCausesOfDeath] = React.useState<CauseOfDeath[]>([]);
-  const [selectedCauseOfDeath, setSelectedCauseOfDeath] = React.useState<CauseOfDeath | null>(null);
-
-  return {
-    causesOfDeath,
-    setCausesOfDeath,
-    selectedCauseOfDeath,
-    setSelectedCauseOfDeath,
-  };
-}
-
 export interface ListCauseOfDeathProps {
   causesOfDeath: CauseOfDeath[];
+  setSelectedCauseOfDeath: (causeOfDeath: CauseOfDeath) => () => void;
   favouriteControl: {
     addFavourite: (favourite: CauseOfDeath) => void;
     removeFavourite: (favourite: CauseOfDeath) => void;
@@ -48,7 +33,7 @@ export interface ListCauseOfDeathProps {
   }
 }
 
-const ListCauseOfDeath: FC<ListCauseOfDeathProps> = ({ causesOfDeath, favouriteControl }) => {
+const ListCauseOfDeath: FC<ListCauseOfDeathProps> = ({ causesOfDeath, favouriteControl, setSelectedCauseOfDeath }) => {
   return (
     <List component="nav">
       {causesOfDeath.map((causeOfDeath) => (
@@ -59,38 +44,33 @@ const ListCauseOfDeath: FC<ListCauseOfDeathProps> = ({ causesOfDeath, favouriteC
             favouriteControl.addFavourite,
             favouriteControl.removeFavourite,
             favouriteControl.isFavourite
-          )}>
+            )}>
             { favouriteControl.isFavourite(causeOfDeath) ? <FavouriteIcon sx={{ color: 'red' }} /> : <FavouriteBorderIcon sx={{ color: 'white' }}/> }
             </ListItemIcon>
-            <ListItemButton>
+            <ListItemButton onClick={ setSelectedCauseOfDeath(causeOfDeath) }>
               <ListItemText primary={causeOfDeath.name} />
             </ListItemButton>
         </ListItem>
       ))}
     </List>
   );
-};
+}; 
 
-const CauseFinder: FC<CauseFinderProps> = () => {
-  const {
-    causesOfDeath,
-    setCausesOfDeath,
-    selectedCauseOfDeath,
-    setSelectedCauseOfDeath,
-  } = useCauseOfDeathState();
+const CauseFinder: FC<CauseFinderProps> = ({ causesOfDeath, favourites, favouriteControl, selectedHandler }) => {
   const [selectedPage, setSelectedPage] = React.useState(pages[0]);
-
+  
   const { filteredCausesOfDeath, filterCausesOfDeath } = useFilterCauseOfDeath(causesOfDeath);
-
+  
   const { search, searchHandler } = useSearchHandler(filterCausesOfDeath);
   const handlePageChange = (page: string) => () => setSelectedPage(page);
-  const { favourites, favouriteControl } = useFavouritesSelector<CauseOfDeath>();
 
-  const visibleCausesOfDeath = search !== '' ? filteredCausesOfDeath : causesOfDeath;
-
+  const visibleCausesOfDeath = search.length > 2 ? filteredCausesOfDeath : causesOfDeath;
+  
   return (
     <div className={styles.CauseFinder} data-testid="CauseFinder">
-        <div className={ styles['flex-column-container']}>
+      <Card>
+      <CardContent>
+      <div className={styles['flex-column-container']}>
           <Toolbar variant="dense">
             <div className={ styles['flex-column-container']}>
             <Box sx={{ flexGrow: 0, display: 'flex', flexWrap: 'wrap', gap: '5px'}}>
@@ -110,13 +90,15 @@ const CauseFinder: FC<CauseFinderProps> = () => {
           </Toolbar>
           <Box sx={{ width: '100%' }}>
             {selectedPage === pages[0] && (
-              <ListCauseOfDeath causesOfDeath={visibleCausesOfDeath} favouriteControl={favouriteControl} />
+              <ListCauseOfDeath causesOfDeath={visibleCausesOfDeath} favouriteControl={favouriteControl} setSelectedCauseOfDeath={ selectedHandler }  />
             )}
             {selectedPage === pages[1] && (
-              <ListCauseOfDeath causesOfDeath={favourites} favouriteControl={favouriteControl}/>
+              <ListCauseOfDeath causesOfDeath={favourites} favouriteControl={favouriteControl} setSelectedCauseOfDeath={ selectedHandler }/>
             )}
           </Box>
-        </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

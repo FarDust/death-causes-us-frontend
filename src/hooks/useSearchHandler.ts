@@ -5,9 +5,11 @@ export const useSearchHandler = (filter: (event: ChangeEvent<HTMLInputElement>) 
   const [search, setSearch] = useState("");
 
   const searchHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value && search !== event.target.value && event.target.value.length > 2) {
+    if (event.target.value && search !== event.target.value) {
       setSearch(event.target.value);
-      filter(event);
+      if (event.target.value.length > 2) {
+        filter(event);
+      }
     };
   };
 

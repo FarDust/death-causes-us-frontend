@@ -1,4 +1,4 @@
 export interface CauseOfDeath {
-  id: number;
+  id: string;
   name: string;
 }
