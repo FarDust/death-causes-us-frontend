@@ -14,7 +14,6 @@ export class DeathCauseService extends Observable<CauseOfDeath[]> {
     from(fetch(`${API_URL}/diseases`).then(response => response.json()))
       .pipe(
         tap((causesOfDeath: CauseOfDeath[]) => {
-          console.log(causesOfDeath);
           this._causesOfDeath$.next(causesOfDeath)
         })
       ).subscribe();

@@ -1,6 +1,6 @@
 import { CauseOfDeath } from "../models/causeOfDeath";
 
-export const useCreateFavouriteHandler = (
+export const createFavouriteHandler = (
   causeOfDeath: CauseOfDeath,
   addFavourite: (favourite: CauseOfDeath) => void,
   removeFavourite: (favourite: CauseOfDeath) => void,

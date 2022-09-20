@@ -27,8 +27,9 @@ const CauseViewer: FC<CauseViewerProps> = ({ causeOfDeath, favourite, deathData 
       setSelectedYear(availableYears[0]);
     } else {
       setAvailableYears(Array.from(new Set(deathData.map((death) => death.year))));
+      setSelectedYear(availableYears[0]);
     }
-  }, [availableYears]);
+  }, [availableYears, deathData]);
 
   let rows = deathData.map((death) => createData(death.year, death.month, death.deaths)).sort((a, b) => a.year > b.year ? 1 : -1);
   if (favourite) {

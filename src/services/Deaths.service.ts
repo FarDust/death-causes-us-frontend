@@ -14,7 +14,6 @@ export class DeathCauseService extends Observable<Death[]> {
   constructor() {
     super(subscriber => this._deathData$.subscribe(subscriber));
     this._causeOfDeathId$.subscribe((causeOfDeath: CauseOfDeath) => {
-      console.log(causeOfDeath);
       if (causeOfDeath.id !== '') {
         from(
           fetch(`${API_URL}/diseases/${causeOfDeath.id}/death-causes`).then(response => response.json())
